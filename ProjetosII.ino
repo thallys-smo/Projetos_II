@@ -1,11 +1,15 @@
 // Definindo os pinos
-const int trigger_mao = 14; //Trigger do sensor da mão
-const int echo_mao = 12; //Echo do sensor da mão
-const int trigger_bola  = 13; //Trigger do sensor da bola
-const int echo_bola     = 15; //Echo do sensor da bola
-const int pino_motor     = 4; // Saída PWM do motor
-const int in1           = 5; //in1 da ponte H
-const int in2           = 16;//in2 da ponte H
+const int trigger_mao = 33; //Trigger do sensor da mão
+const int echo_mao = 35; //Echo do sensor da mão
+const int trigger_bola  = 32; //Trigger do sensor da bola
+const int echo_bola     = 34; //Echo do sensor da bola
+const int pino_motorA     = 25; // Saída PWM do motor
+const int in1           = 26; //in1 da ponte H
+const int in2           = 27;//in2 da ponte H
+//Usando as 2 sáidas da ponte H pra obter uma corrente maior
+const int pino_motorB     = 13; // Saída PWM do motor
+const int in3           = 14; //in3 da ponte H
+const int in4           = 12;//in4 da ponte H
 
 // Variáveis
 unsigned long t_mao;
@@ -71,14 +75,19 @@ const int limiteBC = 64; //Limite entre as regiões B e C dada em % do comprimen
 void setup() {
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
   pinMode(trigger_bola, OUTPUT);
   pinMode(echo_bola, INPUT);
   pinMode(trigger_mao, OUTPUT);
   pinMode(echo_mao, INPUT);
-  pinMode(pino_motor, OUTPUT);
+  pinMode(pino_motorA, OUTPUT);
+  pinMode(pino_motorB, OUTPUT);
   Serial.begin(9600); // Starts the serial communication
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
 
 }
 
@@ -199,12 +208,14 @@ void loop() {
     PID(area); //Calcula os parâmetros de controle
     if (pos_bola>85) //Posição instável que o sensor tem problemas na leitura
     {
-      motor(pino_motor,0); //Desliga o motor 
+      motor(pino_motorA,0); //Desliga o motor 
+      motor(pino_motorB,0); //Desliga o motor 
       flag_inst=1;
     }
     else
     { 
-      motor(pino_motor, controle); //Controla a alimentação do motor
+      motor(pino_motorA, controle); //Controla a alimentação do motor
+      motor(pino_motorB, controle); //Controla a alimentação do motor
       pos_init_bola = pos_bola;
       flag = flag + 1;
     }
