@@ -116,68 +116,8 @@ void setup()
   pinMode(trigger_bola, OUTPUT);
   pinMode(echo_bola, INPUT);
   pinMode(trigger_mao, OUTPUT);
-<<<<<<< HEAD:projeto_ii_v2/projeto_ii_v2.ino
   pinMode(echo_mao, INPUT);    
 }
-
-=======
-  pinMode(echo_mao, INPUT);  
-
-  // Inicializando a comunicação serial
-  Serial.begin(9600); // Taxa de 9600
-}
-void PID (char area) {erro = ref - pos_bola; //Calculo do erro
-  controleP = Kp * erro; //Controle proporcional
-  controleI = init_controlI + Ki * erro * t_amos; //Controle integral
-  controleD = Kd * (-pos_bola + pos_ant_bola) / t_amos; //Controle derivativo
-  //Calcula os valores para o controle PID
-
-  double Kp, Ki, Kd;
-  if (area == 'a') //Area a
-  {
-    Kp = Kpa;
-    Ki = Kia;
-    Kd = Kda;
-  }
-  else if (area == 'b') //Area b
-  {
-    Kp = Kpb;
-    Ki = Kib;
-    Kd = Kdb;
-  }
-  else  if (area == 'c') //Area c
-  {
-    Kp = Kpc;
-    Ki = Kic;
-    Kd = Kdc;
-  }
-
-  erro = ref - pos_bola; //Calculo do erro
-  controleP = Kp * erro; //Controle proporcional
-  controleI = init_controlI + Ki * erro * t_amos; //Controle integral
-  controleD = Kd * (-pos_bola + pos_ant_bola) / t_amos; //Controle derivativo
-
-  //Controle total
-  controle = controleP + controleI + controleD;
-  if (controle > 100) {//Saturação
-    controle = 100;
-    controleI = init_controlI;
-  }
-  else if (controle < 0) {//Saturação
-    controle = 0;
-    controleI = init_controlI;
-  }
-  init_controlI = controleI;
-  erro_ant = erro;
-}
-
-void motor(int valor_pwm){ // Função que varia o pwm no motor
-
-  ciclo_A = map(valor_pwm, 0, 100, 205, 410);   
-  ledcWrite(canal_A, ciclo_A);
-
-}
->>>>>>> 8fdc7ac32c72bbb3c3b93ab4f5d1fc1a01e1da03:src/main.cpp
 
 void loop() {
 
