@@ -28,7 +28,7 @@ unsigned long t_mao;
 double d_mao;
 unsigned long t_bola;
 double d_bola;
-double ref = 50; //posição da mão
+double ref = 30; //posição da mão
 double pos_bola = 0; //posição da bola no tubo
 
 //Aspectos geométricos
@@ -63,13 +63,13 @@ const double Kda = Kpa * ta_D;
 
 const double tb_I = 0.50 * 3.2;
 const double tb_D = 0.012 * 2.2; 
-const double Kpb = 0.35 * 2.0; 
+const double Kpb = 0.30 * 2.0; 
 const double Kib = Kpb / tb_I;
 const double Kdb = Kpb * tb_D;
 
 const double tc_I = 0.5 * 3.2; 
 const double tc_D = 0.014 * 1.1;
-const double Kpc = 0.45 * 1.65;
+const double Kpc = 0.40 * 1.65;
 const double Kic = Kpc / tc_I;
 const double Kdc = Kpc * tc_D;
 
@@ -86,7 +86,7 @@ const int limiteBC = 64; //Limite entre as regiões B e C dada em % do comprimen
 
 void motor(int valor_pwm){ // Função que varia o pwm no motor
 
-  ciclo_A = map(valor_pwm, 0, 100, 205, 275);   
+  ciclo_A = map(valor_pwm, 0, 100, 205, 300);   
   ledcWrite(canal_A, ciclo_A);
 }
 
@@ -180,7 +180,7 @@ void loop() {
     if (flag_mao == 3) //Calcula a media de 3 valores de referência
     {
       ref = (pos_mao[0] + pos_mao[1] + pos_mao[2]) / 3;
-      if ((ref < 21) || (ref > 77) || flag_erro_mao) ref = ref_anterior;
+      if ((ref < 13) || (ref > 44) || flag_erro_mao) ref = ref_anterior;
       flag_erro_mao = false;
       ref_anterior = ref;
       flag_mao = 0; //Reinicia o contador
