@@ -1,15 +1,27 @@
+//#include <Arduino.h>
+
+// Definindo os parametros do PWM
+
+const int freq = 50;
+const int canal_A = 0;
+const int resolucao = 12;
+
+// pino input ESC
+const int pin_Atuacao_A = 5;
+
+// input do AD
+int valor_pwm = 0;
+
+// valor do cilo do PWM
+int ciclo_A = 0;
+
+// PARA CIMA SÃO OS PARAMETROS DO CODIGO DE HOJE -> MOTOR BRUSHLESS 
+
 // Definindo os pinos
 const int trigger_mao = 33; //Trigger do sensor da mão
 const int echo_mao = 35; //Echo do sensor da mão
 const int trigger_bola  = 32; //Trigger do sensor da bola
 const int echo_bola     = 34; //Echo do sensor da bola
-const int pino_motorA     = 25; // Saída PWM do motor
-const int in1           = 26; //in1 da ponte H
-const int in2           = 27;//in2 da ponte H
-//Usando as 2 sáidas da ponte H pra obter uma corrente maior
-const int pino_motorB     = 13; // Saída PWM do motor
-const int in3           = 14; //in3 da ponte H
-const int in4           = 12;//in4 da ponte H
 
 // Variáveis
 unsigned long t_mao;
@@ -20,19 +32,19 @@ double ref = 50; //posição da mão
 double pos_bola = 0; //posição da bola no tubo
 
 //Aspectos geométricos
-const double lacuna_sup = 1; //Lacuna superior em cm
-const double lacuna_inf = 10; //Lacuna inferior em cm
+const double lacuna_sup = 0.5; //Lacuna superior em cm
+const double lacuna_inf = 16; //Lacuna inferior em cm
 const double l_tubo = 40; //Comprimento do tubo em cm
 #define REF_BASE 70;
 double ref_anterior = REF_BASE; // Referência inicial desejada em % do tubo
-const double dm_bola = 4; //Diâmetro da bola em cm
+const double dm_bola = 3; //Diâmetro da bola em cm
 const int t_max = (int) (l_tubo * 3.5 / 0.034); //Tempo máximo de leitura do sensor
 
 //Controle
 double controleP = 0;
 double controleI = 0;
 double controleD = 0;
-double controle = 0;
+double controle  = 0;
 double erro = 0;
 double erro_ant = 0;
 double pos_init_bola = 0; //Posição inicial da bola
@@ -62,36 +74,110 @@ const double Kic = Kpc / tc_I;
 const double Kdc = Kpc * tc_D;
 
 //flags
-int flag = 0; //Contador
+int flag = 0;           //Contador
 bool flag_erro_mao = 0; //Erros na aquisição da referência da mão
 bool flag_erro_bola = 0; //Erros na leitura da posição da bola
-int flag_mao = 0; //Usado para o cálculo da média das posições da mão
-int flag_inst=0; //Instabilidade
-char area = 'a'; //areas 'a', 'b' ou 'c' - Divide o tubo em 3 regiões
+int flag_mao = 0;       //Usado para o cálculo da média das posições da mão
+int flag_inst=0;        //Instabilidade
+char area = 'a';        //areas 'a', 'b' ou 'c' - Divide o tubo em 3 regiões
 //Limites das regiões
 const int limiteAB = 18; //Limite entre as regiões A e B dada em % do comprimento do tubo
 const int limiteBC = 64; //Limite entre as regiões B e C dada em % do comprimento do tubo
 
-void setup() {
-  pinMode(in1, OUTPUT);
-  pinMode(in2, OUTPUT);
-  pinMode(in3, OUTPUT);
-  pinMode(in4, OUTPUT);
-  pinMode(trigger_bola, OUTPUT);
-  pinMode(echo_bola, INPUT);
-  pinMode(trigger_mao, OUTPUT);
-  pinMode(echo_mao, INPUT);
-  pinMode(pino_motorA, OUTPUT);
-  pinMode(pino_motorB, OUTPUT);
-  Serial.begin(9600); // Starts the serial communication
-  digitalWrite(in1, HIGH);
-  digitalWrite(in2, LOW);
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
+void motor(int valor_pwm){ // Função que varia o pwm no motor
 
+  ciclo_A = map(valor_pwm, 0, 100, 205, 275);   
+  ledcWrite(canal_A, ciclo_A);
 }
 
 
+void setup()
+{
+  // Inicializando a comunicação serial
+  Serial.begin(9600); // Taxa de 9600
+  
+  // Inicializando os parametros do motor brushless
+  pinMode(pin_Atuacao_A, OUTPUT);
+  ledcSetup(canal_A, freq, resolucao);
+  ledcAttachPin(pin_Atuacao_A, canal_A); 
+  ledcWrite(canal_A, ciclo_A);
+
+  // Calibrando o motor -> Parado durante 1s  
+  Serial.println("Calibrando");
+  delay(2000);
+  motor(0);
+  delay(5000);
+  Serial.println("Motor Calibrado -> Iniciando a operação");
+  delay(5000);
+
+  // PARA CIMA SÃO OS PARAMETROS DO CODIGO DE HOJE -> MOTOR BRUSHLESS 
+
+  // Inicializando os pinos dos sensores de distancias ultrassonicos
+  pinMode(trigger_bola, OUTPUT);
+  pinMode(echo_bola, INPUT);
+  pinMode(trigger_mao, OUTPUT);
+<<<<<<< HEAD:projeto_ii_v2/projeto_ii_v2.ino
+  pinMode(echo_mao, INPUT);    
+}
+
+=======
+  pinMode(echo_mao, INPUT);  
+
+  // Inicializando a comunicação serial
+  Serial.begin(9600); // Taxa de 9600
+}
+void PID (char area) {erro = ref - pos_bola; //Calculo do erro
+  controleP = Kp * erro; //Controle proporcional
+  controleI = init_controlI + Ki * erro * t_amos; //Controle integral
+  controleD = Kd * (-pos_bola + pos_ant_bola) / t_amos; //Controle derivativo
+  //Calcula os valores para o controle PID
+
+  double Kp, Ki, Kd;
+  if (area == 'a') //Area a
+  {
+    Kp = Kpa;
+    Ki = Kia;
+    Kd = Kda;
+  }
+  else if (area == 'b') //Area b
+  {
+    Kp = Kpb;
+    Ki = Kib;
+    Kd = Kdb;
+  }
+  else  if (area == 'c') //Area c
+  {
+    Kp = Kpc;
+    Ki = Kic;
+    Kd = Kdc;
+  }
+
+  erro = ref - pos_bola; //Calculo do erro
+  controleP = Kp * erro; //Controle proporcional
+  controleI = init_controlI + Ki * erro * t_amos; //Controle integral
+  controleD = Kd * (-pos_bola + pos_ant_bola) / t_amos; //Controle derivativo
+
+  //Controle total
+  controle = controleP + controleI + controleD;
+  if (controle > 100) {//Saturação
+    controle = 100;
+    controleI = init_controlI;
+  }
+  else if (controle < 0) {//Saturação
+    controle = 0;
+    controleI = init_controlI;
+  }
+  init_controlI = controleI;
+  erro_ant = erro;
+}
+
+void motor(int valor_pwm){ // Função que varia o pwm no motor
+
+  ciclo_A = map(valor_pwm, 0, 100, 205, 410);   
+  ledcWrite(canal_A, ciclo_A);
+
+}
+>>>>>>> 8fdc7ac32c72bbb3c3b93ab4f5d1fc1a01e1da03:src/main.cpp
 
 void loop() {
 
@@ -108,10 +194,7 @@ void loop() {
   }
 
   if (flag_inst == 0)
-  {
-
-
-    
+  {    
     //____________Mão___________________
     digitalWrite(trigger_mao, LOW);
     delayMicroseconds(2);
@@ -130,8 +213,6 @@ void loop() {
     delay((int)(30 - t_mao * 0.001));
     pos_mao[flag_mao] = d_mao - lacuna_inf; //Converte o valor no sistema de referência
   
-
-
     //_____________Bola_________________
     digitalWrite(trigger_bola, LOW);
     delayMicroseconds(2);
@@ -151,10 +232,7 @@ void loop() {
     pos_bola = (l_tubo + lacuna_sup) - (d_bola + dm_bola / 2); // Converte o valor no sistema de referência
     delay((int)(25 - t_bola * 0.001));
     
-    
-
-
-    //Converte os valores em % do comprimento do tubo
+        //Converte os valores em % do comprimento do tubo
     pos_mao[flag_mao] = pos_mao[flag_mao] * (100 / l_tubo);
     pos_bola = pos_bola * (100 / l_tubo);
     
@@ -169,7 +247,6 @@ void loop() {
     }
     
     if ((pos_bola < 0) || (pos_bola > 100) || flag_erro_bola) pos_bola = pos_ant_bola;
-
     
     
     //Solução para transição entre regiões do tubo
@@ -208,45 +285,28 @@ void loop() {
     PID(area); //Calcula os parâmetros de controle
     if (pos_bola>85) //Posição instável que o sensor tem problemas na leitura
     {
-      motor(pino_motorA,0); //Desliga o motor 
-      motor(pino_motorB,0); //Desliga o motor 
+      motor(0); //Desliga o motor
       flag_inst=1;
     }
     else
     { 
-      motor(pino_motorA, controle); //Controla a alimentação do motor
-      motor(pino_motorB, controle); //Controla a alimentação do motor
+      motor(controle); //Controla a alimentação do motor
       pos_init_bola = pos_bola;
       flag = flag + 1;
     }
 
     
   }
-  Serial.print(pos_bola);
-  Serial.print(" - ");
-  Serial.println(ref);
+
+  imprimindo(pos_bola, ref, controle);
+  
   if (flag_inst == 1)
   {
     ref_anterior = REF_BASE;
     flag = 0;
   }
   delay(5);
-
 }
-
-//**************************************************************************************************************************************************
-
-
-void motor (int pino_motor , double valor) {
-  //Aplica o valor pwm desejado no motor
-  //Recebe como entrada o pino do motor e o valor em %.
-
-
-  double pwm = (int)((valor / 100) * 255); //Converte para um intervalo de 0-255
-  analogWrite(pino_motor, pwm);
-}
-
-
 
 void PID (char area) {
   //Calcula os valores para o controle PID
@@ -289,3 +349,22 @@ void PID (char area) {
   init_controlI = controleI;
   erro_ant = erro;
 }
+
+void imprimindo(double pos_bola, double ref, double controle){
+
+  Serial.print("Distancia da Bola: ");
+  Serial.println(d_bola);
+  Serial.print("Posição da Bola: ");
+  Serial.println(pos_bola);
+  Serial.print("Distancia mão:");
+  Serial.println(d_mao);
+  Serial.print("Posição de referencia:");
+  Serial.println(ref);
+  Serial.print("Valor de Controle:");
+  Serial.println(controle);
+  delay(1000);
+  Serial.println("\n");
+}
+
+
+
