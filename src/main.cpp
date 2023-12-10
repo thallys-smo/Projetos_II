@@ -105,7 +105,10 @@ void setup()
   // Inicializando a comunicação serial
   Serial.begin(9600); // Taxa de 9600
 }
-void PID (char area) {
+void PID (char area) {erro = ref - pos_bola; //Calculo do erro
+  controleP = Kp * erro; //Controle proporcional
+  controleI = init_controlI + Ki * erro * t_amos; //Controle integral
+  controleD = Kd * (-pos_bola + pos_ant_bola) / t_amos; //Controle derivativo
   //Calcula os valores para o controle PID
 
   double Kp, Ki, Kd;
@@ -149,7 +152,7 @@ void PID (char area) {
 
 void motor(int valor_pwm){ // Função que varia o pwm no motor
 
-  ciclo_A = map(valor_pwm, 0, 4095, 205, 410);   
+  ciclo_A = map(valor_pwm, 0, 100, 205, 410);   
   ledcWrite(canal_A, ciclo_A);
 
 }

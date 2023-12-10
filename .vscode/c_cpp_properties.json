@@ -8,8 +8,8 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/cruvinelnic/Projetos_II/Projeto_II/include",
-                "/home/cruvinelnic/Projetos_II/Projeto_II/src",
+                "/home/cruvinelnic/Projetos_II/include",
+                "/home/cruvinelnic/Projetos_II/src",
                 "/home/cruvinelnic/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                 "/home/cruvinelnic/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
                 "/home/cruvinelnic/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions/freertos",
@@ -238,8 +238,8 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/cruvinelnic/Projetos_II/Projeto_II/include",
-                    "/home/cruvinelnic/Projetos_II/Projeto_II/src",
+                    "/home/cruvinelnic/Projetos_II/include",
+                    "/home/cruvinelnic/Projetos_II/src",
                     "/home/cruvinelnic/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                     "/home/cruvinelnic/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
                     "/home/cruvinelnic/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions/freertos",
