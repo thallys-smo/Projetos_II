@@ -3,13 +3,7 @@ const int trigger_mao = 33; //Trigger do sensor da mão
 const int echo_mao = 35; //Echo do sensor da mão
 const int trigger_bola  = 32; //Trigger do sensor da bola
 const int echo_bola     = 34; //Echo do sensor da bola
-const int pino_motorA     = 25; // Saída PWM do motor
-const int in1           = 26; //in1 da ponte H
-const int in2           = 27;//in2 da ponte H
-//Usando as 2 sáidas da ponte H pra obter uma corrente maior
-const int pino_motorB     = 13; // Saída PWM do motor
-const int in3           = 14; //in3 da ponte H
-const int in4           = 12;//in4 da ponte H
+
 
 // Variáveis
 unsigned long t_mao;
@@ -208,8 +202,8 @@ void loop() {
     PID(area); //Calcula os parâmetros de controle
     if (pos_bola>85) //Posição instável que o sensor tem problemas na leitura
     {
-      motor(pino_motorA,0); //Desliga o motor 
-      motor(pino_motorB,0); //Desliga o motor 
+      motor(pino_motorA,0); //Desliga o motor
+      motor(pino_motorB,0); //Desliga o motor
       flag_inst=1;
     }
     else
@@ -241,6 +235,7 @@ void motor (int pino_motor , double valor) {
   //Aplica o valor pwm desejado no motor
   //Recebe como entrada o pino do motor e o valor em %.
 
+ // alterando map 0-100
 
   double pwm = (int)((valor / 100) * 255); //Converte para um intervalo de 0-255
   analogWrite(pino_motor, pwm);
