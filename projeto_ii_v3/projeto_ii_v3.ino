@@ -11,7 +11,7 @@ float ti = 50;        // Tempo de Integração
   - Kp = k*(1+h/(2*ti)), Ki = k/ti e Kd =  k/20    */
 
 float kp = 6.5;       // Ganho Proporcional
-float ki = 2.1;       // Ganho Integral 
+float ki = 2.4;       // Ganho Integral 
 float kd = 4.7;       // Ganho Diferencial
 float p = 0;          // Variável Proporcional
 float i = 0;          // Variável Integrativa
@@ -101,7 +101,7 @@ void loop(){
   - Min_Pwm = 280 e Max_Pwm = 320   */
 
   // Ação de Controle Aplicada
-  u= motor(u, 282, 330); // 
+  u= motor(u, 287, 330); // 
   
   // Imprimindo as coisas 
   imprimindo(setpoint, l_tubo - d_bola, e, p, i, d, u);  
